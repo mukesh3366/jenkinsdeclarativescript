@@ -2,6 +2,8 @@
 //if we want to give the name of the pipeline,we use agent to denote the name. nodejsnode is the name
 //in scripted way we use node('nodejsnode'){}
 //if we specify "agent any" then it will take default as master, inscripted way it is node{}
+
+@Library('sharedlibs') _ 
 pipeline {
 /*
 agent {
@@ -23,7 +25,7 @@ maven 'maven-3.8.6'
 stages{
 stage('checkoutcode'){
 steps{
-slackNotifications('STARTED')
+sendSlackNotifications('STARTED')
 git branch: 'development', credentialsId: 'd8225d5d-4e94-4274-b08b-8b05b7819134', url: 'https://github.com/royalveg/maven-web-application.git'
 }
 }
@@ -58,20 +60,21 @@ sh "scp -o StrictHostkeyChecking=no target/maven-web-application.war ec2-user@17
 post {
   aborted {
     // One or more steps need to be included within each condition's block.
-  slackNotifications(currentBuild.result)
+  sendSlackNotifications(currentBuild.result)
   }
   success {
     // One or more steps need to be included within each condition's block.
-  slackNotifications(currentBuild.result)
+  sendSlackNotifications(currentBuild.result)
   }
   failure {
     // One or more steps need to be included within each condition's block.
-  slackNotifications(currentBuild.result)
+  sendSlackNotifications(currentBuild.result)
   }
   
 }
 }//pipeline closing
 
+/*
 def slackNotifications(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESS'
@@ -97,3 +100,5 @@ def slackNotifications(String buildStatus = 'STARTED') {
   // Send notifications
   slackSend (color: colorCode, message: summary, channel: "#walmart-dev")
 }
+
+*/
